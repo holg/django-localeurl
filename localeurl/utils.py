@@ -1,5 +1,9 @@
 from django.conf import settings
-from django.core import urlresolvers
+if settings.DJANGO_MAJOR_VERSION >= 2:
+    from django.urls import path, get_script_prefix
+else:
+    from django.core.urlresolvers import get_script_prefix
+#from django.conf import urlresolvers
 from localeurl import settings as localeurl_settings
 
 
@@ -85,9 +89,9 @@ def strip_script_prefix(url):
     Strips the SCRIPT_PREFIX from the URL. Because this function is meant for
     use in templates, it assumes the URL starts with the prefix.
     """
-    assert url.startswith(urlresolvers.get_script_prefix()), \
+    assert url.startswith(get_script_prefix()), \
             "URL must start with SCRIPT_PREFIX: %s" % url
-    pos = len(urlresolvers.get_script_prefix()) - 1
+    pos = len(get_script_prefix()) - 1
     return url[:pos], url[pos:]
 
 
@@ -96,4 +100,4 @@ def add_script_prefix(path):
     Prepends the SCRIPT_PREFIX to a path.
     """
 
-    return ''.join([urlresolvers.get_script_prefix(), path[1:]])
+    return ''.join([get_script_prefix(), path[1:]])
